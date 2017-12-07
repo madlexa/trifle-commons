@@ -20,6 +20,13 @@
         </license>
     </licenses>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -41,6 +48,14 @@
         </dependency>
     </dependencies>
 
+    <developers>
+        <developer>
+            <id>owner</id>
+            <name>Aleksey Dobrynin</name>
+            <email>dobrynin.nsk@gmail.com</email>
+            <timezone>UTC+7</timezone>
+        </developer>
+    </developers>
 
     <build>
         <plugins>
@@ -52,8 +67,45 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.1.11</version>
+                <configuration>
+                    <targetClasses>
+                        <param>one.trifle.commons*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>one.trifle.commons*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.0.0</version>
+            </plugin>
         </plugins>
     </build>
 
+    <scm>
+        <connection>scm:git:https://github.com/madlexa/commons.git</connection>
+        <developerConnection>scm:git:https://github.com/madlexa/commons.git</developerConnection>
+        <url>https://github.com/madlexa/commons.git</url>
+    </scm>
 
 </project>
