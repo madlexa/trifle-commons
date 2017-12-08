@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NavigableMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -355,5 +356,84 @@ public class SplayMapTest {
         assertEquals(destination.get(3), Integer.valueOf(4));
     }
 
+    @Test
+    public void lowerEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.lowerEntry(3), null);
+    }
+
+    @Test
+    public void lowerEntry_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.lowerEntry(1), null);
+    }
+
+
+    @Test
+    public void lowerEntry() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.lowerEntry(3), new SplayMap.Entry<Integer, Integer>(2, 2, null));
+    }
+
+    @Test
+    public void lowerKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.lowerKey(3), null);
+    }
+
+    @Test
+    public void lowerKey_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.lowerKey(1), null);
+    }
+
+
+    @Test
+    public void lowerKey() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.lowerKey(3), Integer.valueOf(2));
+    }
 
 }
