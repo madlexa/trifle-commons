@@ -112,7 +112,7 @@ public class SplayMapTest {
     }
 
     @Test
-    public void castomComporator() {
+    public void custom_comparator() {
         // INIT
         Map<Integer, Integer> map = new SplayMap<Integer, Integer>(new Comparator<Integer>() {
             @Override
@@ -139,5 +139,127 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.get(null), Integer.valueOf(-8));
     }
+
+    @Test
+    public void remove_single_root() {
+        // INIT
+        Map<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, -1);
+
+        // CHECK
+        assertEquals(map.remove(1), Integer.valueOf(-1));
+        assertEquals(map.size(), 0);
+        assertEquals(map.remove(1), null);
+        assertEquals(map.size(), 0);
+    }
+
+    @Test
+    public void remove_root_has_only_left() {
+        // INIT
+        Map<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(2, 2);
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.remove(4), Integer.valueOf(4));
+        assertEquals(map.size(), 3);
+        assertEquals(map.remove(3), Integer.valueOf(3));
+        assertEquals(map.size(), 2);
+
+        assertEquals(map.get(2), Integer.valueOf(2));
+        assertEquals(map.get(1), Integer.valueOf(1));
+    }
+
+    @Test
+    public void remove_root_has_only_right() {
+        // INIT
+        Map<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.remove(1), Integer.valueOf(1));
+        assertEquals(map.size(), 3);
+        assertEquals(map.remove(2), Integer.valueOf(2));
+        assertEquals(map.size(), 2);
+
+        assertEquals(map.get(3), Integer.valueOf(3));
+        assertEquals(map.get(4), Integer.valueOf(4));
+    }
+
+    @Test
+    public void remove_root() {
+        // INIT
+        Map<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(2, 2);
+        map.put(1, 1);
+        map.put(3, 3);
+
+        // CHECK
+        assertEquals(map.remove(2), Integer.valueOf(2));
+        assertEquals(map.size(), 2);
+        assertEquals(map.remove(2), null);
+        assertEquals(map.size(), 2);
+
+        assertEquals(map.get(1), Integer.valueOf(1));
+        assertEquals(map.get(3), Integer.valueOf(3));
+    }
+
+    @Test
+    public void remove_not_root() {
+        // INIT
+        Map<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.remove(4), Integer.valueOf(4));
+        assertEquals(map.size(), 5);
+        assertEquals(map.remove(4), null);
+        assertEquals(map.size(), 5);
+
+        assertEquals(map.get(1), Integer.valueOf(1));
+        assertEquals(map.get(2), Integer.valueOf(2));
+        assertEquals(map.get(3), Integer.valueOf(3));
+        assertEquals(map.get(5), Integer.valueOf(5));
+        assertEquals(map.get(6), Integer.valueOf(6));
+    }
+
+    @Test
+    public void remove_child() {
+        // INIT
+        Map<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(3, 3);
+        map.put(2, 2);
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.remove(1), Integer.valueOf(1));
+        assertEquals(map.size(), 2);
+
+        assertEquals(map.get(3), Integer.valueOf(3));
+        assertEquals(map.get(2), Integer.valueOf(2));
+    }
+
 
 }

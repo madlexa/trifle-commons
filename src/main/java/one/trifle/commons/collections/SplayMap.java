@@ -340,24 +340,61 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         Entry<K, V> element = find(root, key);
         if (element == null)
             return null;
+        Entry<K, V> v = merge(element.left, element.right);
         Entry<K, V> parent = element.parent;
-        //TODO
+
+        if (parent != null) {
+            if (element.equals(parent.left))
+                parent.left = v;
+            else
+                parent.right = v;
+
+            while (parent.parent != null)
+                parent = parent.parent;
+
+            root = parent;
+        } else {
+            root = v;
+        }
+
+        if (v != null)
+            v.parent = element.parent;
+
+        size--;
         return element.value;
     }
 
     private Entry<K, V> merge(Entry<K, V> left, Entry<K, V> right) {
-        /*if (left == null)
+        if (left == null)
             return right;
         if (right == null)
             return left;
-        Entry<K, V> entry = find(right, left.key);
-        if (entry == null)
-            right
+
+        left.parent = null;
+        right.parent = null;
+
+        Entry<K, V> entry = max(left);
         splay(entry);
-        right =
-        TODO
-        */
-        throw new UnsupportedOperationException();
+        entry.right = right;
+        right.parent = entry;
+
+        return entry;
+    }
+
+    private Entry<K, V> max(Entry<K, V> root) {
+        if (root == null)
+            return null;
+        while (root.right != null)
+            root = root.right;
+        return root;
+    }
+
+    private Entry<K, V> min(Entry<K, V> root) {
+        if (root == null)
+            return null;
+        while (root.left != null)
+            root = root.left;
+        return root;
     }
 
     @Override
@@ -433,6 +470,9 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         }
 
         public boolean equals(Object o) {
+            if (o == null) {
+                return false;
+            }
             if (!(o instanceof Map.Entry))
                 return false;
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
