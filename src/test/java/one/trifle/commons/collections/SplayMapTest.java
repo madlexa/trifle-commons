@@ -3,6 +3,7 @@ package one.trifle.commons.collections;
 import org.junit.Test;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -259,6 +260,99 @@ public class SplayMapTest {
 
         assertEquals(map.get(3), Integer.valueOf(3));
         assertEquals(map.get(2), Integer.valueOf(2));
+    }
+
+
+    @Test
+    public void putAll_empty() {
+        // INIT
+        Map<Integer, Integer> destination = new SplayMap<Integer, Integer>();
+        Map<Integer, Integer> source = new HashMap<Integer, Integer>();
+
+        // EXEC
+        destination.putAll(source);
+
+        // CHECK
+        assertEquals(destination.size(), 0);
+    }
+
+    @Test
+    public void putAll_from_empty() {
+        // INIT
+        Map<Integer, Integer> destination = new SplayMap<Integer, Integer>();
+        Map<Integer, Integer> source = new HashMap<Integer, Integer>();
+
+        // EXEC
+        destination.put(1, 1);
+        destination.put(2, 2);
+
+        destination.putAll(source);
+
+        // CHECK
+        assertEquals(destination.size(), 2);
+        assertEquals(destination.get(1), Integer.valueOf(1));
+        assertEquals(destination.get(2), Integer.valueOf(2));
+    }
+
+    @Test
+    public void putAll_to_empty() {
+        // INIT
+        Map<Integer, Integer> destination = new SplayMap<Integer, Integer>();
+        Map<Integer, Integer> source = new HashMap<Integer, Integer>();
+
+        // EXEC
+        source.put(1, 1);
+        source.put(2, 2);
+
+        destination.putAll(source);
+
+        // CHECK
+        assertEquals(destination.size(), 2);
+        assertEquals(destination.get(1), Integer.valueOf(1));
+        assertEquals(destination.get(2), Integer.valueOf(2));
+    }
+
+    @Test
+    public void putAll_without_interceptions() {
+        // INIT
+        Map<Integer, Integer> destination = new SplayMap<Integer, Integer>();
+        Map<Integer, Integer> source = new HashMap<Integer, Integer>();
+
+        // EXEC
+        source.put(1, 1);
+        source.put(2, 2);
+        destination.put(3, 3);
+        destination.put(4, 4);
+
+        destination.putAll(source);
+
+        // CHECK
+        assertEquals(destination.size(), 4);
+        assertEquals(destination.get(1), Integer.valueOf(1));
+        assertEquals(destination.get(2), Integer.valueOf(2));
+        assertEquals(destination.get(3), Integer.valueOf(3));
+        assertEquals(destination.get(4), Integer.valueOf(4));
+    }
+
+    @Test
+    public void putAll_with_interceptions() {
+        // INIT
+        Map<Integer, Integer> destination = new SplayMap<Integer, Integer>();
+        Map<Integer, Integer> source = new HashMap<Integer, Integer>();
+
+        // EXEC
+        destination.put(1, 1);
+        destination.put(2, 2);
+        source.put(2, 3);
+        source.put(3, 4);
+
+        destination.putAll(source);
+
+        // CHECK
+        assertEquals(destination.size(), 3);
+        assertEquals(destination.get(1), Integer.valueOf(1));
+        assertEquals(destination.get(2), Integer.valueOf(3));
+        assertEquals(destination.get(3), Integer.valueOf(4));
     }
 
 

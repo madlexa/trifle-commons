@@ -209,6 +209,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             return null;
 
         root = splay(element);
+        modCount++;
         return element.value;
     }
 
@@ -361,6 +362,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             v.parent = element.parent;
 
         size--;
+        modCount++;
         return element.value;
     }
 
@@ -398,13 +400,15 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException();
+    public void putAll(Map<? extends K, ? extends V> map) {
+        super.putAll(map);
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        modCount++;
+        size = 0;
+        root = null;
     }
 
     @Override
