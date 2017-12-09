@@ -312,20 +312,20 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             return element;
 
         Entry<K, V> parent = element.parent;
-        Entry<K, V> gparent = parent.parent;
+        Entry<K, V> grandparent = parent.parent;
 
-        if (gparent == null) {
+        if (grandparent == null) {
             rotate(parent, element);
             return element;
         }
 
-        boolean zigzig = Objects.equals(gparent.left, parent) == Objects.equals(parent.left, element);
-        if (zigzig) {
-            rotate(gparent, parent);
+        boolean zig_zig = Objects.equals(grandparent.left, parent) == Objects.equals(parent.left, element);
+        if (zig_zig) {
+            rotate(grandparent, parent);
             rotate(parent, element);
         } else {
             rotate(parent, element);
-            rotate(gparent, element);
+            rotate(grandparent, element);
         }
         return splay(element);
     }
@@ -341,12 +341,12 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
     }
 
     private void rotate(Entry<K, V> parent, Entry<K, V> child) {
-        Entry<K, V> gparent = parent.parent;
-        if (gparent != null)
-            if (parent.equals(gparent.left))
-                gparent.left = child;
+        Entry<K, V> grandparent = parent.parent;
+        if (grandparent != null)
+            if (parent.equals(grandparent.left))
+                grandparent.left = child;
             else
-                gparent.right = child;
+                grandparent.right = child;
 
         if (child.equals(parent.left)) {
             parent.left = child.right;
@@ -358,7 +358,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
         keep_parent(child);
         keep_parent(parent);
-        child.parent = gparent;
+        child.parent = grandparent;
     }
 
     @Override
