@@ -243,14 +243,13 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         if (element == null)
             return null;
 
-        int cmp;
+        int cmp = compare(element.key, key);
         do {
-            cmp = compare(key, element.key);
-            if (cmp < 0)
+            if (cmp > 0)
                 element = element.left;
-            else if (cmp > 0)
+            else if (cmp < 0)
                 element = element.right;
-        } while (element != null && compare(element.key, key) != 0);
+        } while (element != null && (cmp = compare(element.key, key)) != 0);
 
         if (element == null)
             return null;
