@@ -577,7 +577,7 @@ public class SplayMapTest {
             }
         }
 
-        assertEquals(map.size(), 1);
+        assertEquals(map.size(), 0);
     }
 
     @Test
