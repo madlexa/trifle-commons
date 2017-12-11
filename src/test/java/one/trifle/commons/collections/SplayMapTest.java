@@ -434,6 +434,85 @@ public class SplayMapTest {
         assertEquals(map.lowerKey(3), Integer.valueOf(2));
     }
 
+    @Test
+    public void floorEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.floorEntry(3), null);
+    }
+
+    @Test
+    public void floorEntry_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.floorEntry(0), null);
+    }
+
+
+    @Test
+    public void floorEntry() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.floorEntry(3), new SplayMap.Entry<Integer, Integer>(3, 3, null));
+    }
+
+    @Test
+    public void floorKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.floorKey(3), null);
+    }
+
+    @Test
+    public void floorKey_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.floorKey(0), null);
+    }
+
+
+    @Test
+    public void floorKey() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.floorKey(3), Integer.valueOf(3));
+    }
 
     @Test
     public void emptyEntrySet() {
