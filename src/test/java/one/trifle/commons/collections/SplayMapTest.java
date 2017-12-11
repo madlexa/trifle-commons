@@ -962,4 +962,113 @@ public class SplayMapTest {
         assertEquals(map.containsValue(1), true);
     }
 
+    @Test
+    public void ceilingEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.ceilingEntry(3), null);
+    }
+
+    @Test
+    public void ceilingEntry_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.ceilingEntry(5), null);
+    }
+
+    @Test
+    public void ceilingEntryEq() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.ceilingEntry(3), new SplayMap.Entry<Integer, Integer>(3, 3, null));
+    }
+
+    @Test
+    public void ceilingEntryBiggest() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.ceilingEntry(3), new SplayMap.Entry<Integer, Integer>(4, 4, null));
+    }
+
+
+    @Test
+    public void ceilingKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.ceilingKey(3), null);
+    }
+
+    @Test
+    public void ceilingKey_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.ceilingKey(5), null);
+    }
+
+
+    @Test
+    public void ceilingKeyEq() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.ceilingKey(3), Integer.valueOf(3));
+    }
+
+    @Test
+    public void ceilingKeyBiggest() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.ceilingKey(4), Integer.valueOf(4));
+    }
 }
