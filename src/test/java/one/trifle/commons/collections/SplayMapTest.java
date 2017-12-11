@@ -560,4 +560,53 @@ public class SplayMapTest {
         }
         assertEquals(counter_outer, Integer.valueOf(6));
     }
+
+    @Test
+    public void singleEntrySet_remove() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        for (Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, Integer> entry = it.next();
+            if (entry.getKey().equals(1)) {
+                it.remove();
+            }
+        }
+
+        assertEquals(map.size(), 1);
+    }
+
+    @Test
+    public void entrySet_remove() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        for (Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, Integer> entry = it.next();
+            if (entry.getKey() % 2 == 1) {
+                it.remove();
+            }
+        }
+
+        Integer counter = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            counter++;
+            assertEquals(entry.getKey(), (Integer) (counter * 2));
+            assertEquals(entry.getValue(), (Integer) (counter * 2));
+        }
+        assertEquals(counter, Integer.valueOf(3));
+    }
 }

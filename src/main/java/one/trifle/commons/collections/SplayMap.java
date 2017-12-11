@@ -236,9 +236,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         if (element == null)
             return null;
 
-        root = splay(element);
-        modCount++;
-        return element.value;
+        return (root = splay(element)).value;
     }
 
     private Entry<K, V> getEntry(Entry<K, V> parent, Object key) {
@@ -363,16 +361,14 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         child.parent = grandparent;
     }
 
-    @Override
-    public V remove(Object key) {
-        Entry<K, V> element = getEntry(root, key);
-        if (element == null)
-            return null;
-        Entry<K, V> v = merge(element.left, element.right);
-        Entry<K, V> parent = element.parent;
+    private void removeEntry(Entry<K, V> entry) {
+        if (entry == null)
+            return;
+        Entry<K, V> v = merge(entry.left, entry.right);
+        Entry<K, V> parent = entry.parent;
 
         if (parent != null) {
-            if (element.equals(parent.left))
+            if (entry.equals(parent.left))
                 parent.left = v;
             else
                 parent.right = v;
@@ -386,10 +382,18 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         }
 
         if (v != null)
-            v.parent = element.parent;
+            v.parent = entry.parent;
 
         size--;
         modCount++;
+    }
+
+    @Override
+    public V remove(Object key) {
+        Entry<K, V> element = getEntry(root, key);
+        removeEntry(element);
+        if (element == null)
+            return null;
         return element.value;
     }
 
@@ -549,6 +553,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             next = first;
         }
 
+        @Override
         public final boolean hasNext() {
             return next != null;
         }
@@ -579,6 +584,19 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
             return e;
         }
+
+        @Override
+        public void remove() {
+            if (lastReturned == null)
+                throw new IllegalStateException();
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+
+            removeEntry(lastReturned);
+
+            expectedModCount = modCount;
+            lastReturned = null;
+        }
     }
 
     final class EntryIterator extends PrivateEntryIterator<Map.Entry<K, V>> {
@@ -586,13 +604,9 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             super(first);
         }
 
+        @Override
         public Map.Entry<K, V> next() {
             return nextEntry();
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
         }
     }
 }
