@@ -1071,4 +1071,213 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.ceilingKey(4), Integer.valueOf(4));
     }
+
+    @Test
+    public void higherEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.higherEntry(3), null);
+    }
+
+    @Test
+    public void higherEntry_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.higherEntry(4), null);
+        assertEquals(map.higherEntry(5), null);
+    }
+
+    @Test
+    public void higherEntryEq() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+        map.put(5, 5);
+
+        // CHECK
+        assertEquals(map.higherEntry(3), new SplayMap.Entry<Integer, Integer>(4, 4, null));
+    }
+
+    @Test
+    public void higherEntryBiggest() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.higherEntry(3), new SplayMap.Entry<Integer, Integer>(4, 4, null));
+    }
+
+
+    @Test
+    public void higherKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        assertEquals(map.higherKey(3), null);
+    }
+
+    @Test
+    public void higherKey_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.higherKey(4), null);
+        assertEquals(map.higherKey(5), null);
+    }
+
+
+    @Test
+    public void higherKeyEq() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.higherKey(3), Integer.valueOf(4));
+    }
+
+    @Test
+    public void higherKeyBiggest() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(map.higherKey(3), Integer.valueOf(4));
+    }
+
+    @Test
+    public void pollFirstEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.pollFirstEntry(), null);
+    }
+
+    @Test
+    public void pollFirstEntry_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.pollFirstEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
+        assertEquals(map.size(), 0);
+        assertEquals(map.pollFirstEntry(), null);
+    }
+
+    @Test
+    public void pollFirstEntry() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.pollFirstEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
+        Integer counter = 1;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            counter++;
+            assertEquals(entry.getKey(), counter);
+            assertEquals(entry.getValue(), counter);
+        }
+        assertEquals(map.size(), 3);
+        assertEquals(counter, Integer.valueOf(4));
+    }
+
+    @Test
+    public void pollLastEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.pollLastEntry(), null);
+    }
+
+    @Test
+    public void pollLastEntry_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.pollLastEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
+        assertEquals(map.size(), 0);
+        assertEquals(map.pollLastEntry(), null);
+    }
+
+    @Test
+    public void pollLastEntry() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.pollLastEntry(), new SplayMap.Entry<Integer, Integer>(4, 4, null));
+        Integer counter = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            counter++;
+            assertEquals(entry.getKey(), counter);
+            assertEquals(entry.getValue(), counter);
+        }
+        assertEquals(map.size(), 3);
+        assertEquals(counter, Integer.valueOf(3));
+    }
 }

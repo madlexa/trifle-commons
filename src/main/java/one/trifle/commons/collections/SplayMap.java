@@ -218,14 +218,21 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         return max(root);
     }
 
-    @Override
-    public Entry<K, V> pollFirstEntry() {
-        throw new UnsupportedOperationException();
+    /**
+     * Return SimpleImmutableEntry for entry, or null if null
+     */
+    static <K, V> Map.Entry<K, V> exportEntry(Map.Entry<K, V> e) {
+        return (e == null) ? null :
+                new AbstractMap.SimpleImmutableEntry<K, V>(e);
     }
 
     @Override
-    public Entry<K, V> pollLastEntry() {
-        throw new UnsupportedOperationException();
+    public Map.Entry<K, V> pollFirstEntry() {
+        Entry<K, V> p = firstEntry();
+        Map.Entry<K, V> result = exportEntry(p);
+        if (p != null)
+            removeEntry(p);
+        return result;
     }
 
     @Override
@@ -698,5 +705,14 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         public Map.Entry<K, V> next() {
             return nextEntry();
         }
+    }
+
+    @Override
+    public Map.Entry<K, V> pollLastEntry() {
+        Entry<K, V> p = lastEntry();
+        Map.Entry<K, V> result = exportEntry(p);
+        if (p != null)
+            removeEntry(p);
+        return result;
     }
 }
