@@ -175,12 +175,37 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public Entry<K, V> higherEntry(K key) {
-        throw new UnsupportedOperationException();
+        Entry<K, V> p = root;
+        while (p != null) {
+            int cmp = compare(key, p.key);
+            if (cmp < 0) {
+                if (p.left != null)
+                    p = p.left;
+                else
+                    return p;
+            } else {
+                if (p.right != null) {
+                    p = p.right;
+                } else {
+                    Entry<K, V> parent = p.parent;
+                    Entry<K, V> ch = p;
+                    while (parent != null && ch == parent.right) {
+                        ch = parent;
+                        parent = parent.parent;
+                    }
+                    return parent;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public K higherKey(K key) {
-        throw new UnsupportedOperationException();
+        Entry<K, V> entry = higherEntry(key);
+        if (entry == null)
+            return null;
+        return entry.key;
     }
 
     @Override
