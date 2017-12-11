@@ -1,11 +1,9 @@
 package one.trifle.commons.collections;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NavigableMap;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -436,4 +434,130 @@ public class SplayMapTest {
         assertEquals(map.lowerKey(3), Integer.valueOf(2));
     }
 
+
+    @Test
+    public void emptyEntrySet() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        Iterator<Map.Entry<Integer, Integer>> iterator = entries.iterator();
+
+        // CHECK
+        assertEquals(entries.size(), 0);
+        assertEquals(entries.isEmpty(), true);
+        assertEquals(iterator.hasNext(), false);
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignore) {
+        }
+    }
+
+    @Test
+    public void singleEntrySet() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        Iterator<Map.Entry<Integer, Integer>> iterator = entries.iterator();
+
+        assertEquals(entries.size(), 1);
+        assertEquals(entries.isEmpty(), false);
+        assertEquals(iterator.hasNext(), true);
+        assertEquals(iterator.next().getKey(), Integer.valueOf(1));
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignore) {
+        }
+        assertEquals(iterator.hasNext(), false);
+    }
+
+    @Test
+    public void entrySet() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        assertEquals(entries.size(), 6);
+
+        Integer counter = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            counter++;
+            assertEquals(entry.getKey(), counter);
+            assertEquals(entry.getValue(), counter);
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
+    public void entrySet_read_and_put() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        assertEquals(entries.size(), 2);
+
+        Iterator<Map.Entry<Integer, Integer>> iterator = entries.iterator();
+        assertEquals(iterator.next().getKey(), Integer.valueOf(1));
+
+        map.put(3, 3);
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (ConcurrentModificationException ignore) {
+        }
+    }
+
+    @Test
+    public void entrySet_double_read() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        Integer counter_outer = 0;
+        for (Map.Entry<Integer, Integer> entry_outer : map.entrySet()) {
+            counter_outer++;
+            assertEquals(entry_outer.getKey(), counter_outer);
+            assertEquals(entry_outer.getValue(), counter_outer);
+
+            Integer counter_inner = 0;
+            for (Map.Entry<Integer, Integer> entry_inner : map.entrySet()) {
+                counter_inner++;
+                assertEquals(entry_inner.getKey(), counter_inner);
+                assertEquals(entry_inner.getValue(), counter_inner);
+            }
+            assertEquals(counter_inner, Integer.valueOf(6));
+        }
+        assertEquals(counter_outer, Integer.valueOf(6));
+    }
 }

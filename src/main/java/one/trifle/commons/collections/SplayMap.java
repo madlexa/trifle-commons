@@ -22,6 +22,8 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     private transient int modCount = 0;
 
+    private transient EntrySet entrySet;
+
     /**
      * Constructs a new, empty splay map, using the natural ordering of its
      * keys.  All keys inserted into the map must implement the {@link
@@ -59,7 +61,8 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
-        throw new UnsupportedOperationException();
+        EntrySet es = entrySet;
+        return (es != null) ? es : (entrySet = new EntrySet());
     }
 
     @Override
@@ -214,7 +217,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException();
+        return super.isEmpty();
     }
 
     @Override
@@ -229,7 +232,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public V get(Object key) {
-        Entry<K, V> element = find(root, key);
+        Entry<K, V> element = getEntry(root, key);
         if (element == null)
             return null;
 
@@ -238,7 +241,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         return element.value;
     }
 
-    private Entry<K, V> find(Entry<K, V> parent, Object key) {
+    private Entry<K, V> getEntry(Entry<K, V> parent, Object key) {
         Entry<K, V> element = parent;
         if (element == null)
             return null;
@@ -362,7 +365,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public V remove(Object key) {
-        Entry<K, V> element = find(root, key);
+        Entry<K, V> element = getEntry(root, key);
         if (element == null)
             return null;
         Entry<K, V> v = merge(element.left, element.right);
@@ -516,6 +519,80 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
         public String toString() {
             return key + " = " + value;
+        }
+    }
+
+    private final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
+
+        @Override
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return new EntryIterator(min(root));
+        }
+
+        @Override
+        public int size() {
+            return SplayMap.this.size();
+        }
+    }
+
+    /**
+     * Base class for SplayMap Iterators
+     */
+    abstract class PrivateEntryIterator<T> implements Iterator<T> {
+        Entry<K, V> next;
+        Entry<K, V> lastReturned;
+        int expectedModCount;
+
+        PrivateEntryIterator(Entry<K, V> first) {
+            expectedModCount = modCount;
+            lastReturned = null;
+            next = first;
+        }
+
+        public final boolean hasNext() {
+            return next != null;
+        }
+
+        final Entry<K, V> nextEntry() {
+            Entry<K, V> e = next;
+            if (e == null)
+                throw new NoSuchElementException();
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+
+            if (e.right != null) {
+                Entry<K, V> n = e.right;
+                while (n.left != null) {
+                    n = n.left;
+                }
+                next = n;
+            } else if (e.parent != null) {
+                if (e.equals(e.parent.left)) {
+                    next = e.parent;
+                } else {
+                    next = e.parent.parent;
+                }
+            } else {
+                next = null;
+            }
+            lastReturned = e;
+
+            return e;
+        }
+    }
+
+    final class EntryIterator extends PrivateEntryIterator<Map.Entry<K, V>> {
+        EntryIterator(Entry<K, V> first) {
+            super(first);
+        }
+
+        public Map.Entry<K, V> next() {
+            return nextEntry();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
