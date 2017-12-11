@@ -688,4 +688,156 @@ public class SplayMapTest {
         }
         assertEquals(counter, Integer.valueOf(3));
     }
+
+    @Test
+    public void firstEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.firstEntry(), null);
+    }
+
+    @Test
+    public void firstEntry_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.firstEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
+    }
+
+    @Test
+    public void firstEntry() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.firstEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
+    }
+
+    @Test
+    public void firstKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.firstKey(), null);
+    }
+
+    @Test
+    public void firstKey_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.firstKey(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void firstKey() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.firstKey(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void lastEntry_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.lastEntry(), null);
+    }
+
+    @Test
+    public void lastEntry_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.lastEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
+    }
+
+    @Test
+    public void lastEntry() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.lastEntry(), new SplayMap.Entry<Integer, Integer>(4, 4, null));
+    }
+
+    @Test
+    public void lastKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.lastKey(), null);
+    }
+
+    @Test
+    public void lastKey_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.lastKey(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void lastKey() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.lastKey(), Integer.valueOf(4));
+    }
 }

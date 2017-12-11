@@ -159,12 +159,12 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public Entry<K, V> firstEntry() {
-        throw new UnsupportedOperationException();
+        return min(root);
     }
 
     @Override
     public Entry<K, V> lastEntry() {
-        throw new UnsupportedOperationException();
+        return max(root);
     }
 
     @Override
@@ -229,12 +229,18 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public K firstKey() {
-        throw new UnsupportedOperationException();
+        Entry<K, V> entry = firstEntry();
+        if (entry == null)
+            return null;
+        return entry.key;
     }
 
     @Override
     public K lastKey() {
-        throw new UnsupportedOperationException();
+        Entry<K, V> entry = lastEntry();
+        if (entry == null)
+            return null;
+        return entry.key;
     }
 
     @Override
