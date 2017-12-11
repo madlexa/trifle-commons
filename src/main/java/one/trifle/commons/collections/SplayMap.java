@@ -249,18 +249,24 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
     }
 
     @Override
-    public boolean isEmpty() {
-        return super.isEmpty();
-    }
-
-    @Override
     public boolean containsValue(Object value) {
-        throw new UnsupportedOperationException();
+        for (Map.Entry<K, V> entry : entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                // TODO need splay?
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean containsKey(Object key) {
-        throw new UnsupportedOperationException();
+        Entry<K, V> entry = getEntry(root, key);
+        if (entry != null) {
+            // TODO need splay?
+            return true;
+        }
+        return false;
     }
 
     @Override

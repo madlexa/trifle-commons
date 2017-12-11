@@ -840,4 +840,126 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.lastKey(), Integer.valueOf(4));
     }
+
+    @Test
+    public void containsKey_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.containsKey(1), false);
+    }
+
+    @Test
+    public void containsKey_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.containsKey(1), true);
+    }
+
+    @Test
+    public void containsKey_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.containsKey(4), false);
+    }
+
+    @Test
+    public void containsKey() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.containsKey(3), true);
+    }
+
+    @Test
+    public void containsValue_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+
+        // CHECK
+        assertEquals(map.containsValue(1), false);
+    }
+
+    @Test
+    public void containsValue_single() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(map.containsValue(1), true);
+    }
+
+    @Test
+    public void containsValue_none() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.containsValue(4), false);
+    }
+
+    @Test
+    public void containsValue() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        assertEquals(map.containsValue(3), true);
+    }
+
+    @Test
+    public void containsDoubleValue() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 1);
+        map.put(3, 1);
+        map.put(1, 1);
+        map.put(2, 1);
+
+        // CHECK
+        assertEquals(map.containsValue(1), true);
+    }
+
 }
