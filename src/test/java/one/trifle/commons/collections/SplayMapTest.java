@@ -1280,4 +1280,176 @@ public class SplayMapTest {
         assertEquals(map.size(), 3);
         assertEquals(counter, Integer.valueOf(3));
     }
+
+    @Test
+    public void emptyValues() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        Collection<Integer> values = map.values();
+        Iterator<Integer> iterator = values.iterator();
+
+        // CHECK
+        assertEquals(values.size(), 0);
+        assertEquals(values.isEmpty(), true);
+        assertEquals(iterator.hasNext(), false);
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignore) {
+        }
+    }
+
+    @Test
+    public void singleValues() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 7);
+
+        // CHECK
+        Collection<Integer> values = map.values();
+        Iterator<Integer> iterator = values.iterator();
+
+        assertEquals(values.size(), 1);
+        assertEquals(values.isEmpty(), false);
+        assertEquals(iterator.hasNext(), true);
+        assertEquals(iterator.next(), Integer.valueOf(7));
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignore) {
+        }
+        assertEquals(iterator.hasNext(), false);
+    }
+
+    @Test
+    public void values() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 2);
+        map.put(4, 3);
+        map.put(6, 1);
+        map.put(2, 5);
+        map.put(3, 4);
+        map.put(1, 6);
+
+        // CHECK
+        Collection<Integer> values = map.values();
+        assertEquals(values.size(), 6);
+
+        Integer counter = 0;
+        for (Integer value : map.values()) {
+            counter++;
+            assertEquals(value, Integer.valueOf(7 - counter));
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
+    public void values_read_and_put() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 4);
+        map.put(2, 5);
+
+        // CHECK
+        Collection<Integer> values = map.values();
+        assertEquals(values.size(), 2);
+
+        Iterator<Integer> iterator = values.iterator();
+        assertEquals(iterator.next(), Integer.valueOf(4));
+
+        map.put(3, 6);
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (ConcurrentModificationException ignore) {
+        }
+    }
+
+    @Test
+    public void values_double_read() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 2);
+        map.put(4, 3);
+        map.put(6, 1);
+        map.put(2, 5);
+        map.put(3, 4);
+        map.put(1, 6);
+
+        // CHECK
+        Integer counter_outer = 0;
+        for (Integer outer : map.values()) {
+            counter_outer++;
+            assertEquals(outer, Integer.valueOf(7 - counter_outer));
+
+            Integer counter_inner = 0;
+            for (Integer inner : map.values()) {
+                counter_inner++;
+                assertEquals(inner, Integer.valueOf(7 - counter_inner));
+            }
+            assertEquals(counter_inner, Integer.valueOf(6));
+        }
+        assertEquals(counter_outer, Integer.valueOf(6));
+    }
+
+    @Test
+    public void singleValues_remove() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        for (Iterator<Integer> it = map.values().iterator(); it.hasNext(); ) {
+            Integer value = it.next();
+            if (value.equals(1)) {
+                it.remove();
+            }
+        }
+
+        assertEquals(map.size(), 0);
+    }
+
+
+    @Test
+    public void values_remove() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        for (Iterator<Integer> it = map.values().iterator(); it.hasNext(); ) {
+            Integer value = it.next();
+            if (value % 2 == 1) {
+                it.remove();
+            }
+        }
+
+        Integer counter = 0;
+        for (Integer value : map.values()) {
+            counter++;
+            assertEquals(value, (Integer) (counter * 2));
+        }
+        assertEquals(counter, Integer.valueOf(3));
+    }
 }

@@ -24,6 +24,8 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     private transient EntrySet entrySet;
 
+    transient Collection<V> values;
+
     /**
      * Constructs a new, empty splay map, using the natural ordering of its
      * keys.  All keys inserted into the map must implement the {@link
@@ -546,7 +548,12 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public Collection<V> values() {
-        throw new UnsupportedOperationException();
+        Collection<V> vs = values;
+        if (vs == null) {
+            vs = new Values();
+            values = vs;
+        }
+        return vs;
     }
 
     /**
@@ -575,6 +582,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
          *
          * @return the key
          */
+        @Override
         public K getKey() {
             return key;
         }
@@ -584,6 +592,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
          *
          * @return the value associated with the key
          */
+        @Override
         public V getValue() {
             return value;
         }
@@ -595,12 +604,14 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
          * @return the value associated with the key before this method was
          * called
          */
+        @Override
         public V setValue(V value) {
             V oldValue = this.value;
             this.value = value;
             return oldValue;
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o == null) {
                 return false;
@@ -612,6 +623,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             return Objects.equals(key, e.getKey()) && Objects.equals(value, e.getValue());
         }
 
+        @Override
         public int hashCode() {
             int keyHash = (key == null ? 0 : key.hashCode());
             int valueHash = (value == null ? 0 : value.hashCode());
@@ -715,4 +727,37 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             removeEntry(p);
         return result;
     }
+
+    class Values extends AbstractCollection<V> {
+        public Iterator<V> iterator() {
+            return new ValueIterator(min(root));
+        }
+
+        @Override
+        public int size() {
+            return SplayMap.this.size();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return SplayMap.this.containsValue(o);
+        }
+
+        @Override
+        public void clear() {
+            SplayMap.this.clear();
+        }
+    }
+
+    final class ValueIterator extends PrivateEntryIterator<V> {
+        ValueIterator(Entry<K, V> first) {
+            super(first);
+        }
+
+        @Override
+        public V next() {
+            return nextEntry().value;
+        }
+    }
+
 }
