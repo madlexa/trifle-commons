@@ -24,7 +24,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     private transient EntrySet entrySet;
 
-    transient Collection<V> values;
+    private transient Collection<V> values;
 
     /**
      * Constructs a new, empty splay map, using the natural ordering of its
@@ -269,7 +269,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public Comparator<? super K> comparator() {
-        throw new UnsupportedOperationException();
+        return comparator;
     }
 
     @Override

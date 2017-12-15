@@ -1452,4 +1452,55 @@ public class SplayMapTest {
         }
         assertEquals(counter, Integer.valueOf(3));
     }
+
+    @Test
+    public void empty_comparator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        Comparator<? super Integer> comparator = map.comparator();
+
+        // CHECK
+        assertEquals(comparator, null);
+    }
+
+    @Test
+    public void get_custom_comparator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return -1;
+            }
+        });
+
+        // EXEC
+        Comparator<? super Integer> comparator = map.comparator();
+
+        // CHECK
+        assertEquals(comparator.compare(1, -1), -1);
+        assertEquals(comparator.compare(-1, 1), -1);
+        assertEquals(comparator.compare(null, null), -1);
+    }
+
+    @Test
+    public void auto_comparator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        Comparator<? super Integer> comparator = map.comparator();
+
+        // CHECK
+        assertEquals(comparator.compare(1, -1), 1);
+        assertEquals(comparator.compare(-1, 1), -1);
+        try {
+            comparator.compare(null, null);
+            Assert.fail();
+        } catch (NullPointerException ignore) {
+        }
+
+    }
 }
