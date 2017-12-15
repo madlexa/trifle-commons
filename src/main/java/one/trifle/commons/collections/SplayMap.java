@@ -249,7 +249,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public NavigableSet<K> descendingKeySet() {
-        throw new UnsupportedOperationException();
+        return descendingMap().navigableKeySet();
     }
 
     @Override
@@ -259,12 +259,20 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public NavigableMap<K, V> headMap(K toKey, boolean inclusive) {
-        throw new UnsupportedOperationException();
+        Entry<K, V> start = min(root);
+        if (start == null) {
+            throw new UnsupportedOperationException();
+        }
+        return subMap(start.key, true, toKey, false);
     }
 
     @Override
     public NavigableMap<K, V> tailMap(K fromKey, boolean inclusive) {
-        throw new UnsupportedOperationException();
+        Entry<K, V> end = max(root);
+        if (end == null) {
+            throw new UnsupportedOperationException();
+        }
+        return subMap(fromKey, true, end.key, false);
     }
 
     @Override
@@ -274,7 +282,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public SortedMap<K, V> subMap(K fromKey, K toKey) {
-        throw new UnsupportedOperationException();
+        return subMap(fromKey, true, toKey, false);
     }
 
     @Override
@@ -722,6 +730,7 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
             return nextEntry();
         }
     }
+
 
     @Override
     public Map.Entry<K, V> pollLastEntry() {
