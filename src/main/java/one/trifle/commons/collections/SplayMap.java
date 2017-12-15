@@ -684,7 +684,11 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
                 if (e.equals(e.parent.left)) {
                     next = e.parent;
                 } else {
-                    next = e.parent.parent;
+                    Entry<K, V> element = e;
+                    while (element.parent != null && element.equals(element.parent.right)) {
+                        element = element.parent;
+                    }
+                    next = element.parent;
                 }
             } else {
                 next = null;
