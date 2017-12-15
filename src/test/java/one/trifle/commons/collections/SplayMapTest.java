@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SplayMapTest {
     @Test
@@ -686,6 +686,32 @@ public class SplayMapTest {
     }
 
     @Test
+    public void entrySet_ordered_desc_with_min_root() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(6, 6);
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(2, 2);
+
+        // CHECK
+        Set<Map.Entry<Integer, Integer>> entries = map.entrySet();
+        assertEquals(entries.size(), 6);
+
+        Integer counter = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            counter++;
+            assertEquals(entry.getKey(), counter);
+            assertEquals(entry.getValue(), counter);
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
     public void entrySet_read_and_put() {
         // INIT
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
@@ -789,6 +815,48 @@ public class SplayMapTest {
         }
         assertEquals(counter, Integer.valueOf(3));
     }
+
+    @Test(expected = ConcurrentModificationException.class)
+    public void entrySet_remove_and_modify() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+        map.put(5, 5);
+        map.put(6, 6);
+
+        // CHECK
+        for (Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Integer, Integer> entry = it.next();
+            if (entry.getKey() == 3) {
+                map.remove(3);
+            }
+            if (entry.getKey() % 2 == 1) {
+                it.remove();
+            }
+        }
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void entrySet_get_more() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator();
+        it.next();
+        it.next();
+        it.next();
+    }
+
 
     @Test
     public void firstEntry_empty() {
@@ -1633,6 +1701,50 @@ public class SplayMapTest {
     }
 
     @Test
+    public void values_contains() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(1, 1);
+
+        // CHECK
+        assertTrue(map.values().contains(2));
+        assertFalse(map.values().contains(3));
+    }
+
+    @Test
+    public void values_clear() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        Collection<Integer> values = map.values();
+        assertTrue(values.contains(2));
+        assertEquals(values.size(), 4);
+
+        values.clear();
+
+        assertFalse(values.contains(2));
+        assertEquals(values.size(), 0);
+
+        assertEquals(map.size(), 0);
+
+        assertFalse(map.values().contains(2));
+        assertEquals(map.values().size(), 0);
+    }
+
+    @Test
     public void empty_comparator() {
         // INIT
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
@@ -1680,6 +1792,39 @@ public class SplayMapTest {
             Assert.fail();
         } catch (NullPointerException ignore) {
         }
-
     }
+
+    @Test
+    public void toStringEntry() {
+        // INIT
+        Map.Entry<String, Integer> entry = new SplayMap.Entry<String, Integer>("my key", -1, null);
+
+        // CHECK
+        assertEquals(entry.toString(), "my key = -1");
+    }
+
+    @Test
+    public void hashCodeEntry() {
+        // INIT
+        Map.Entry<String, Integer> entry = new SplayMap.Entry<String, Integer>("my key", -1, null);
+
+        // CHECK
+        assertEquals(entry.hashCode(), 1061584404);
+    }
+
+    @Test
+    public void equalsEntry() {
+        // INIT
+        Map.Entry<String, Integer> entry = new SplayMap.Entry<String, Integer>("my key", -1, null);
+
+        // CHECK
+        assertFalse(entry.equals(null));
+        assertFalse(entry.equals(new SplayMap.Entry<String, Integer>("my key", 999, null)));
+        assertFalse(entry.equals(new SplayMap.Entry<String, Integer>("not my key", -1, null)));
+        assertFalse(entry.equals(new SplayMap.Entry<String, String>("not my key", "-1", null)));
+        assertFalse(entry.equals("String"));
+
+        assertTrue(entry.equals(new SplayMap.Entry<String, Integer>("my key", -1, null)));
+    }
+
 }
