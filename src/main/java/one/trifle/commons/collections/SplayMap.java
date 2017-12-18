@@ -24,6 +24,8 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     private transient EntrySet entrySet;
 
+    private transient KeySet<K> navigableKeySet;
+
     private transient Collection<V> values;
 
     /**
@@ -244,7 +246,8 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public NavigableSet<K> navigableKeySet() {
-        throw new UnsupportedOperationException();
+        KeySet<K> nks = navigableKeySet;
+        return (nks != null) ? nks : (navigableKeySet = new KeySet<K>(this));
     }
 
     @Override
@@ -773,4 +776,158 @@ public class SplayMap<K, V> extends AbstractMap<K, V>
         }
     }
 
+    Iterator<K> keyIterator() {
+        return new KeyIterator(firstEntry());
+    }
+
+    Iterator<K> descendingKeyIterator() {
+        throw new UnsupportedOperationException();
+    }
+
+    static final class KeySet<E> extends AbstractSet<E> implements NavigableSet<E> {
+        private final NavigableMap<E, ?> m;
+
+        KeySet(NavigableMap<E, ?> map) {
+            m = map;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Iterator<E> iterator() {
+            if (m instanceof SplayMap)
+                return ((SplayMap<E, ?>) m).keyIterator();
+            else
+                throw new UnsupportedOperationException("Unsupported sub map");
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Iterator<E> descendingIterator() {
+            if (m instanceof SplayMap)
+                return ((SplayMap<E, ?>) m).descendingKeyIterator();
+            else
+                throw new UnsupportedOperationException("Unsupported sub map");
+        }
+
+        @Override
+        public int size() {
+            return m.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return m.isEmpty();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return m.containsKey(o);
+        }
+
+        @Override
+        public void clear() {
+            m.clear();
+        }
+
+        @Override
+        public E lower(E e) {
+            return m.lowerKey(e);
+        }
+
+        @Override
+        public E floor(E e) {
+            return m.floorKey(e);
+        }
+
+        @Override
+        public E ceiling(E e) {
+            return m.ceilingKey(e);
+        }
+
+        @Override
+        public E higher(E e) {
+            return m.higherKey(e);
+        }
+
+        @Override
+        public E first() {
+            return m.firstKey();
+        }
+
+        @Override
+        public E last() {
+            return m.lastKey();
+        }
+
+        @Override
+        public Comparator<? super E> comparator() {
+            return m.comparator();
+        }
+
+        @Override
+        public E pollFirst() {
+            Map.Entry<E, ?> e = m.pollFirstEntry();
+            return (e == null) ? null : e.getKey();
+        }
+
+        @Override
+        public E pollLast() {
+            Map.Entry<E, ?> e = m.pollLastEntry();
+            return (e == null) ? null : e.getKey();
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            int oldSize = size();
+            m.remove(o);
+            return size() != oldSize;
+        }
+
+        @Override
+        public NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
+                                      E toElement, boolean toInclusive) {
+            return new KeySet<E>(m.subMap(fromElement, fromInclusive,
+                    toElement, toInclusive));
+        }
+
+        @Override
+        public NavigableSet<E> headSet(E toElement, boolean inclusive) {
+            return new KeySet<E>(m.headMap(toElement, inclusive));
+        }
+
+        @Override
+        public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
+            return new KeySet<E>(m.tailMap(fromElement, inclusive));
+        }
+
+        @Override
+        public SortedSet<E> subSet(E fromElement, E toElement) {
+            return subSet(fromElement, true, toElement, false);
+        }
+
+        @Override
+        public SortedSet<E> headSet(E toElement) {
+            return headSet(toElement, false);
+        }
+
+        @Override
+        public SortedSet<E> tailSet(E fromElement) {
+            return tailSet(fromElement, true);
+        }
+
+        @Override
+        public NavigableSet<E> descendingSet() {
+            return new KeySet<E>(m.descendingMap());
+        }
+    }
+
+    final class KeyIterator extends PrivateEntryIterator<K> {
+        KeyIterator(Entry<K, V> first) {
+            super(first);
+        }
+
+        public K next() {
+            return nextEntry().key;
+        }
+    }
 }

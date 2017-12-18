@@ -857,6 +857,509 @@ public class SplayMapTest {
         it.next();
     }
 
+    @Test
+    public void emptyKeySet() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        Set<Integer> keys = map.keySet();
+        Iterator<Integer> iterator = keys.iterator();
+
+        // CHECK
+        assertEquals(keys.size(), 0);
+        assertEquals(keys.isEmpty(), true);
+        assertEquals(iterator.hasNext(), false);
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignore) {
+        }
+    }
+
+    @Test
+    public void singleKeySet() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, -1);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        Iterator<Integer> iterator = keys.iterator();
+
+        assertEquals(keys.size(), 1);
+        assertEquals(keys.isEmpty(), false);
+        assertEquals(iterator.hasNext(), true);
+        assertEquals(iterator.next(), Integer.valueOf(1));
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (NoSuchElementException ignore) {
+        }
+        assertEquals(iterator.hasNext(), false);
+    }
+
+    @Test
+    public void keySet() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        assertEquals(keys.size(), 6);
+
+        Integer counter = 0;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, ++counter);
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
+    public void keySet_ordered() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+        map.put(5, 5);
+        map.put(6, 6);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        assertEquals(keys.size(), 6);
+
+        Integer counter = 0;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, ++counter);
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
+    public void keySet_ordered_desc() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(6, 6);
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(2, 2);
+        map.put(1, 1);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        assertEquals(keys.size(), 6);
+
+        Integer counter = 0;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, ++counter);
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
+    public void keySet_ordered_desc_with_min_root() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(6, 6);
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(2, 2);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        assertEquals(keys.size(), 6);
+
+        Integer counter = 0;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, ++counter);
+        }
+        assertEquals(counter, Integer.valueOf(6));
+    }
+
+    @Test
+    public void keySet_read_and_put_from_iterator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, -1);
+        map.put(2, -2);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        assertEquals(keys.size(), 2);
+
+        Iterator<Integer> iterator = keys.iterator();
+        assertEquals(iterator.next(), Integer.valueOf(1));
+
+        map.put(3, -3);
+
+        try {
+            iterator.next();
+            Assert.fail();
+        } catch (ConcurrentModificationException ignore) {
+        }
+    }
+
+    @Test
+    public void keySet_double_read_from_iterator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        Integer counter_outer = 0;
+        for (Integer key_outer : map.keySet()) {
+            assertEquals(key_outer, ++counter_outer);
+            Integer counter_inner = 0;
+            for (Integer key_inner : map.keySet()) {
+                assertEquals(key_inner, ++counter_inner);
+            }
+            assertEquals(counter_inner, Integer.valueOf(6));
+        }
+        assertEquals(counter_outer, Integer.valueOf(6));
+    }
+
+    @Test
+    public void singleKeySet_remove_from_iterator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        for (Iterator<Integer> it = map.keySet().iterator(); it.hasNext(); ) {
+            Integer entry = it.next();
+            if (entry.equals(1)) {
+                it.remove();
+            }
+        }
+
+        assertEquals(map.size(), 0);
+    }
+
+    @Test
+    public void keySet_remove_from_iterator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(5, 5);
+        map.put(4, 4);
+        map.put(6, 6);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(1, 1);
+
+        // CHECK
+        for (Iterator<Integer> it = map.keySet().iterator(); it.hasNext(); ) {
+            Integer entry = it.next();
+            if (entry % 2 == 1) {
+                it.remove();
+            }
+        }
+
+        Integer counter = 0;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, (Integer) (++counter * 2));
+        }
+        assertEquals(counter, Integer.valueOf(3));
+    }
+
+    @Test(expected = ConcurrentModificationException.class)
+    public void keySet_remove_and_modify_from_iterator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+        map.put(5, 5);
+        map.put(6, 6);
+
+        // CHECK
+        for (Iterator<Integer> it = map.keySet().iterator(); it.hasNext(); ) {
+            Integer key = it.next();
+            if (key == 3) {
+                map.remove(3);
+            }
+            if (key % 2 == 1) {
+                it.remove();
+            }
+        }
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void keySet_get_more_from_iterator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        Iterator<Integer> it = map.keySet().iterator();
+        it.next();
+        it.next();
+        it.next();
+    }
+
+    @Test
+    public void keySet_contains() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(2, 2);
+        map.put(1, 1);
+        map.put(3, 3);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        Assert.assertTrue(keys.contains(1));
+        Assert.assertTrue(keys.contains(2));
+        Assert.assertTrue(keys.contains(3));
+        Assert.assertFalse(keys.contains(4));
+        Assert.assertFalse(keys.contains(0));
+    }
+
+    @Test
+    public void keySet_contains_empty() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        Assert.assertFalse(keys.contains(1));
+        Assert.assertFalse(keys.contains(0));
+    }
+
+    @Test
+    public void keySet_clear() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        Set<Integer> keys = map.keySet();
+        assertTrue(keys.contains(2));
+        assertEquals(keys.size(), 4);
+
+        keys.clear();
+
+        assertFalse(keys.contains(2));
+        assertEquals(keys.size(), 0);
+
+        assertEquals(map.size(), 0);
+
+        assertFalse(map.values().contains(2));
+        assertEquals(map.values().size(), 0);
+    }
+
+    @Test
+    public void keySet_lower() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(((NavigableSet<Integer>) map.keySet()).lower(3), Integer.valueOf(2));
+    }
+
+    @Test
+    public void keySet_floor() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(((NavigableSet<Integer>) map.keySet()).floor(4), Integer.valueOf(4));
+        assertEquals(((NavigableSet<Integer>) map.keySet()).floor(3), Integer.valueOf(2));
+    }
+
+    @Test
+    public void keySet_ceiling() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(((NavigableSet<Integer>) map.keySet()).ceiling(1), Integer.valueOf(1));
+        assertEquals(((NavigableSet<Integer>) map.keySet()).ceiling(3), Integer.valueOf(4));
+    }
+
+    @Test
+    public void keySet_higher() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+        map.put(2, 2);
+
+        map.put(4, 4);
+
+        // CHECK
+        assertEquals(((NavigableSet<Integer>) map.keySet()).higher(1), Integer.valueOf(2));
+        assertEquals(((NavigableSet<Integer>) map.keySet()).higher(3), Integer.valueOf(4));
+    }
+
+    @Test
+    public void keySet_first() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(2, 2);
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(((NavigableSet<Integer>) map.keySet()).first(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void keySet_last() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(2, 2);
+        map.put(1, 1);
+
+        // CHECK
+        assertEquals(((NavigableSet<Integer>) map.keySet()).last(), Integer.valueOf(2));
+    }
+
+    @Test
+    public void keySet_comparator() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(1, 1);
+
+        // CHECK
+        Comparator<? super Integer> comparator = ((NavigableSet<Integer>) map.keySet()).comparator();
+        assertEquals(comparator.compare(1, 2), -1);
+        assertEquals(comparator.compare(1, 1), 0);
+        assertEquals(comparator.compare(2, 1), 1);
+    }
+
+    @Test
+    public void keySet_pollFirst() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        NavigableSet<Integer> keys = (NavigableSet<Integer>) map.keySet();
+        assertEquals(keys.pollFirst(), Integer.valueOf(1));
+        Integer counter = 1;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, ++counter);
+        }
+        assertEquals(map.size(), 3);
+        assertEquals(counter, Integer.valueOf(4));
+    }
+
+    @Test
+    public void keySet_pollLast() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        NavigableSet<Integer> keys = (NavigableSet<Integer>) map.keySet();
+        assertEquals(keys.pollLast(), Integer.valueOf(4));
+        Integer counter = 0;
+        for (Integer key : map.keySet()) {
+            assertEquals(key, ++counter);
+        }
+        assertEquals(map.size(), 3);
+        assertEquals(counter, Integer.valueOf(3));
+    }
+
+    @Test
+    public void keySet_remove() {
+        // INIT
+        NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
+
+        // EXEC
+        map.put(4, 4);
+        map.put(3, 3);
+        map.put(1, 1);
+        map.put(2, 2);
+
+        // CHECK
+        NavigableSet<Integer> keys = (NavigableSet<Integer>) map.keySet();
+        assertTrue(keys.remove(3));
+        assertFalse(keys.remove(5));
+        assertEquals(keys.size(), 3);
+        assertEquals(map.size(), 3);
+        assertFalse(map.containsKey(3));
+    }
 
     @Test
     public void firstEntry_empty() {
