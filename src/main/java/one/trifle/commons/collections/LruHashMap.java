@@ -3,9 +3,7 @@ package one.trifle.commons.collections;
 import one.trifle.commons.utils.Objects;
 
 import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class LruHashMap<K, V> extends AbstractMap<K, V>
         implements Map<K, V>, Serializable {
@@ -25,9 +23,10 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
      */
     private transient final Entry<K, V>[] table;
     private int size;
-    private volatile Entry<K, V> root;
-    private volatile Entry<K, V> last;
+    private Entry<K, V> root;
+    private Entry<K, V> last;
     private transient int modCount = 0;
+    private transient EntrySet entrySet;
 
     @SuppressWarnings("unchecked")
     public LruHashMap(int size) {
@@ -51,7 +50,8 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
 
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
-        throw new UnsupportedOperationException();
+        EntrySet es = entrySet;
+        return (es != null) ? es : (entrySet = new EntrySet());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
             do {
                 if (cur.hash == hash && Objects.equals(cur.key, key)) {
                     oldVal = cur.setValue(value);
-                    removeEntry(cur);
+                    removeEntryFromStatistic(cur);
                     setHeadEntry(cur);
                     break;
                 }
@@ -101,7 +101,7 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
 
     private void removeTail() {
         while (size > maxSize && last != null) {
-            remove(last);
+            removeEntry(last);
         }
     }
 
@@ -135,19 +135,19 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
         int hash = spread(key.hashCode());
         Entry<K, V> entry = getEntry(hash, key);
         if (entry != null) {
-            removeEntry(entry);
+            removeEntryFromStatistic(entry);
             setHeadEntry(entry);
             return entry.value;
         }
         return null;
     }
 
-    private V remove(Entry<K, V> entry) {
+    private V removeEntry(Entry<K, V> entry) {
         int backed = backed(table.length, entry.hash);
         Entry<K, V> cur = table[backed];
         if (cur == entry) {
             table[backed] = cur.next;
-            removeEntry(cur);
+            removeEntryFromStatistic(cur);
             size--;
             modCount++;
             return cur.value;
@@ -157,7 +157,7 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
             prev = cur;
             cur = cur.next;
         }
-        removeEntry(cur);
+        removeEntryFromStatistic(cur);
         prev.next = cur.next;
         size--;
         modCount++;
@@ -175,7 +175,7 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
         root = entry;
     }
 
-    private void removeEntry(Entry<K, V> entry) {
+    private void removeEntryFromStatistic(Entry<K, V> entry) {
         Entry<K, V> before = entry.before;
         Entry<K, V> after = entry.after;
         if (before != null) {
@@ -197,8 +197,8 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
     static class Entry<K, V> implements Map.Entry<K, V> {
         final int hash;
         final K key;
-        volatile Entry<K, V> before, after, next;
-        volatile V value;
+        Entry<K, V> before, after, next;
+        V value;
 
         Entry(int hash, K key, V value, Entry<K, V> after, Entry<K, V> before, Entry<K, V> next) {
             this.hash = hash;
@@ -245,6 +245,85 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
         @Override
         public String toString() {
             return key + " = " + value;
+        }
+    }
+
+    private final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
+
+        @Override
+        public Iterator<Map.Entry<K, V>> iterator() {
+            Entry<K, V> first = null;
+            for (Entry<K, V> entry : table)
+                if ((first = entry) != null)
+                    break;
+            return new EntryIterator(first);
+        }
+
+        @Override
+        public int size() {
+            return LruHashMap.this.size();
+        }
+    }
+
+    final class EntryIterator extends PrivateEntryIterator<Map.Entry<K, V>> {
+        EntryIterator(Entry<K, V> first) {
+            super(first);
+        }
+
+        @Override
+        public Map.Entry<K, V> next() {
+            return nextEntry();
+        }
+    }
+
+    /**
+     * Base class for SplayMap Iterators
+     */
+    abstract class PrivateEntryIterator<T> implements Iterator<T> {
+        Entry<K, V> next;
+        Entry<K, V> lastReturned;
+        int expectedModCount;
+
+        PrivateEntryIterator(Entry<K, V> first) {
+            expectedModCount = modCount;
+            lastReturned = null;
+            next = first;
+        }
+
+        @Override
+        public final boolean hasNext() {
+            return next != null;
+        }
+
+        final Entry<K, V> nextEntry() {
+            Entry<K, V> e = next;
+            if (e == null)
+                throw new NoSuchElementException();
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+
+            if (e.next != null) {
+                next = e.next;
+            } else {
+                next = null;
+                for (int cursor = backed(table.length, e.hash) + 1; cursor < table.length; cursor++)
+                    if ((next = table[cursor]) != null)
+                        break;
+            }
+            return lastReturned = e;
+        }
+
+        @Override
+        public void remove() {
+            if (lastReturned == null)
+                throw new IllegalStateException();
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+
+            LruHashMap.this.removeEntry(lastReturned);
+
+            expectedModCount = modCount;
+            lastReturned = null;
         }
     }
 }
