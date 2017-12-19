@@ -207,4 +207,51 @@ public class LruHashMapTest {
         assertEquals(map.get(4), null);
         assertEquals(map.get(6), null);
     }
+
+    @Test
+    public void containsValue() {
+        // INIT
+        Map<Integer, Integer> map = new LruHashMap<Integer, Integer>(5);
+
+        // EXEC
+        map.put(1, -1);
+        map.put(2, -2);
+        map.put(3, -3);
+        map.put(4, -4);
+        map.put(5, -5);
+
+        // CHECK
+        assertTrue(map.containsValue(-1));
+        assertTrue(map.containsValue(-1));
+        assertTrue(map.containsValue(-2));
+        assertTrue(map.containsValue(-3));
+        assertTrue(map.containsValue(-4));
+        assertTrue(map.containsValue(-5));
+        assertFalse(map.containsValue(1));
+    }
+
+    @Test
+    public void containsKey() {
+        // INIT
+        Map<Integer, Integer> map = new LruHashMap<Integer, Integer>(4);
+
+        // EXEC
+        map.put(1, -1);
+        map.put(2, -2);
+        map.put(3, -3);
+        map.put(4, -4);
+
+        assertTrue(map.containsKey(1));
+
+        map.put(5, -5);
+
+        // CHECK
+        assertTrue(map.containsKey(1));
+        assertTrue(map.containsKey(3));
+        assertTrue(map.containsKey(4));
+        assertTrue(map.containsKey(5));
+
+        assertFalse(map.containsKey(2));
+    }
+
 }

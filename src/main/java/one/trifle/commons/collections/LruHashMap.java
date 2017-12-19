@@ -59,6 +59,17 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
         return size;
     }
 
+    @Override
+    public boolean containsKey(Object key) {
+        int hash = spread(key.hashCode());
+        Entry<K, V> entry = getEntry(hash, key);
+        if (entry != null) {
+            removeEntryFromStatistic(entry);
+            setHeadEntry(entry);
+        }
+        return entry != null;
+    }
+
     /**
      * Implementation for put and putIfAbsent
      */
