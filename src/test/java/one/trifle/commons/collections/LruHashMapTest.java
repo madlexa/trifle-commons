@@ -254,4 +254,88 @@ public class LruHashMapTest {
         assertFalse(map.containsKey(2));
     }
 
+    @Test
+    public void remove_empty() {
+        // INIT
+        Map<Integer, Integer> map = new LruHashMap<Integer, Integer>(0);
+
+        // EXEC
+        map.put(1, -1);
+        map.put(2, -2);
+
+        // CHECK
+        assertEquals(map.remove(1), null);
+        assertEquals(map.remove(2), null);
+    }
+
+    @Test
+    public void remove() {
+        // INIT
+        Map<Integer, Integer> map = new LruHashMap<Integer, Integer>(5);
+
+        // EXEC
+        map.put(1, -1);
+        map.put(2, -2);
+        map.put(3, -3);
+        map.put(4, -4);
+
+        // CHECK
+        assertEquals(map.remove(5), null);
+        assertEquals(map.size(), 4);
+        assertEquals(map.remove(1), Integer.valueOf(-1));
+        assertEquals(map.size(), 3);
+        assertEquals(map.remove(2), Integer.valueOf(-2));
+        assertEquals(map.size(), 2);
+        assertEquals(map.remove(3), Integer.valueOf(-3));
+        assertEquals(map.size(), 1);
+        assertEquals(map.remove(4), Integer.valueOf(-4));
+        assertEquals(map.size(), 0);
+    }
+
+    @Test
+    public void remove_from_one_backed() {
+        // INIT
+        Map<MyClass, Integer> map = new LruHashMap<MyClass, Integer>(5);
+
+        // EXEC
+        map.put(new MyClass(1, 5), -1);
+        map.put(new MyClass(2, 5), -2);
+        map.put(new MyClass(3, 5), -3);
+        map.put(new MyClass(4, 5), -4);
+
+        // CHECK
+        assertEquals(map.remove(new MyClass(5, 5)), null);
+        assertEquals(map.size(), 4);
+        assertEquals(map.remove(new MyClass(4, 5)), Integer.valueOf(-4));
+        assertEquals(map.size(), 3);
+        assertEquals(map.remove(new MyClass(3, 5)), Integer.valueOf(-3));
+        assertEquals(map.size(), 2);
+        assertEquals(map.remove(new MyClass(2, 5)), Integer.valueOf(-2));
+        assertEquals(map.size(), 1);
+        assertEquals(map.remove(new MyClass(1, 5)), Integer.valueOf(-1));
+        assertEquals(map.size(), 0);
+    }
+
+    private static class MyClass {
+        private final int val;
+        private final int hash;
+
+        private MyClass(int val, int hash) {
+            this.val = val;
+            this.hash = hash;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MyClass myClass = (MyClass) o;
+            return val == myClass.val;
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+    }
 }
