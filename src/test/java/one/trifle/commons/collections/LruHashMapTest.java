@@ -316,6 +316,26 @@ public class LruHashMapTest {
         assertEquals(map.size(), 0);
     }
 
+    @Test
+    public void clear() {
+        // INIT
+        Map<MyClass, Integer> map = new LruHashMap<MyClass, Integer>(5);
+
+        // EXEC
+        map.put(new MyClass(1, 5), -1);
+        map.put(new MyClass(2, 5), -2);
+        map.put(new MyClass(3, 5), -3);
+        map.put(new MyClass(4, 5), -4);
+        map.clear();
+
+        // CHECK
+        assertEquals(map.size(), 0);
+        assertEquals(map.get(new MyClass(4, 5)), null);
+        assertEquals(map.put(new MyClass(1, 5), -1), null);
+        assertEquals(map.get(new MyClass(4, 5)), null);
+        assertEquals(map.get(new MyClass(1, 5)), Integer.valueOf(-1));
+    }
+
     private static class MyClass {
         private final int val;
         private final int hash;

@@ -22,7 +22,7 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
      * Size is always a power of two. Accessed directly by iterators.
      */
     private transient final Entry<K, V>[] table;
-    private int size;
+    private int size = 0;
     private Entry<K, V> root;
     private Entry<K, V> last;
     private transient int modCount = 0;
@@ -32,7 +32,6 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
     public LruHashMap(int size) {
         table = new Entry[(int) ((size / LOAD_FACTOR) + 1)];
         this.maxSize = size;
-        this.size = 0;
     }
 
     static final int spread(int hash) {
@@ -284,6 +283,15 @@ public class LruHashMap<K, V> extends AbstractMap<K, V>
         @Override
         public int size() {
             return LruHashMap.this.size();
+        }
+
+        @Override
+        public void clear() {
+            root = null;
+            last = null;
+            Arrays.fill(table, null);
+            size = 0;
+            modCount = 0;
         }
     }
 
