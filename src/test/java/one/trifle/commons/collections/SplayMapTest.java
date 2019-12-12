@@ -108,7 +108,7 @@ public class SplayMapTest {
         map.put(1, 1);
 
         // CHECK
-        assertEquals(map.get(10), null);
+        assertNull(map.get(10));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.remove(1), Integer.valueOf(-1));
         assertEquals(map.size(), 0);
-        assertEquals(map.remove(1), null);
+        assertNull(map.remove(1));
         assertEquals(map.size(), 0);
     }
 
@@ -210,7 +210,7 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.remove(2), Integer.valueOf(2));
         assertEquals(map.size(), 2);
-        assertEquals(map.remove(2), null);
+        assertNull(map.remove(2));
         assertEquals(map.size(), 2);
 
         assertEquals(map.get(1), Integer.valueOf(1));
@@ -233,7 +233,7 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.remove(4), Integer.valueOf(4));
         assertEquals(map.size(), 5);
-        assertEquals(map.remove(4), null);
+        assertNull(map.remove(4));
         assertEquals(map.size(), 5);
 
         assertEquals(map.get(1), Integer.valueOf(1));
@@ -381,7 +381,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.lowerEntry(3), null);
+        assertNull(map.lowerEntry(3));
     }
 
     @Test
@@ -396,7 +396,7 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.lowerEntry(1), null);
+        assertNull(map.lowerEntry(1));
     }
 
 
@@ -436,7 +436,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.lowerKey(3), null);
+        assertNull(map.lowerKey(3));
     }
 
     @Test
@@ -451,7 +451,7 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.lowerKey(1), null);
+        assertNull(map.lowerKey(1));
     }
 
 
@@ -476,7 +476,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.floorEntry(3), null);
+        assertNull(map.floorEntry(3));
     }
 
     @Test
@@ -491,7 +491,7 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.floorEntry(0), null);
+        assertNull(map.floorEntry(0));
     }
 
 
@@ -529,7 +529,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.floorKey(3), null);
+        assertNull(map.floorKey(3));
     }
 
     @Test
@@ -544,7 +544,7 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.floorKey(0), null);
+        assertNull(map.floorKey(0));
     }
 
 
@@ -573,8 +573,8 @@ public class SplayMapTest {
 
         // CHECK
         assertEquals(entries.size(), 0);
-        assertEquals(entries.isEmpty(), true);
-        assertEquals(iterator.hasNext(), false);
+        assertTrue(entries.isEmpty());
+        assertFalse(iterator.hasNext());
         try {
             iterator.next();
             Assert.fail();
@@ -595,8 +595,8 @@ public class SplayMapTest {
         Iterator<Map.Entry<Integer, Integer>> iterator = entries.iterator();
 
         assertEquals(entries.size(), 1);
-        assertEquals(entries.isEmpty(), false);
-        assertEquals(iterator.hasNext(), true);
+        assertFalse(entries.isEmpty());
+        assertTrue(iterator.hasNext());
         assertEquals(iterator.next().getKey(), Integer.valueOf(1));
 
         try {
@@ -604,7 +604,7 @@ public class SplayMapTest {
             Assert.fail();
         } catch (NoSuchElementException ignore) {
         }
-        assertEquals(iterator.hasNext(), false);
+        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -807,13 +807,13 @@ public class SplayMapTest {
             }
         }
 
-        Integer counter = 0;
+        int counter = 0;
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             counter++;
             assertEquals(entry.getKey(), (Integer) (counter * 2));
             assertEquals(entry.getValue(), (Integer) (counter * 2));
         }
-        assertEquals(counter, Integer.valueOf(3));
+        assertEquals(counter, 3);
     }
 
     @Test(expected = ConcurrentModificationException.class)
@@ -867,8 +867,8 @@ public class SplayMapTest {
 
         // CHECK
         assertEquals(keys.size(), 0);
-        assertEquals(keys.isEmpty(), true);
-        assertEquals(iterator.hasNext(), false);
+        assertTrue(keys.isEmpty());
+        assertFalse(iterator.hasNext());
         try {
             iterator.next();
             Assert.fail();
@@ -889,8 +889,8 @@ public class SplayMapTest {
         Iterator<Integer> iterator = keys.iterator();
 
         assertEquals(keys.size(), 1);
-        assertEquals(keys.isEmpty(), false);
-        assertEquals(iterator.hasNext(), true);
+        assertFalse(keys.isEmpty());
+        assertTrue(iterator.hasNext());
         assertEquals(iterator.next(), Integer.valueOf(1));
 
         try {
@@ -898,7 +898,7 @@ public class SplayMapTest {
             Assert.fail();
         } catch (NoSuchElementException ignore) {
         }
-        assertEquals(iterator.hasNext(), false);
+        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -1188,7 +1188,7 @@ public class SplayMapTest {
         assertEquals(keys.size(), 0);
 
         assertEquals(map.size(), 0);
-
+        assertFalse(map.containsValue(2));
         assertFalse(map.values().contains(2));
         assertEquals(map.values().size(), 0);
     }
@@ -1292,6 +1292,7 @@ public class SplayMapTest {
 
         // CHECK
         Comparator<? super Integer> comparator = ((NavigableSet<Integer>) map.keySet()).comparator();
+        assert comparator != null;
         assertEquals(comparator.compare(1, 2), -1);
         assertEquals(comparator.compare(1, 1), 0);
         assertEquals(comparator.compare(2, 1), 1);
@@ -1369,7 +1370,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.firstEntry(), null);
+        assertNull(map.firstEntry());
     }
 
     @Test
@@ -1407,7 +1408,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.firstKey(), null);
+        assertNull(map.firstKey());
     }
 
     @Test
@@ -1445,7 +1446,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.lastEntry(), null);
+        assertNull(map.lastEntry());
     }
 
     @Test
@@ -1499,7 +1500,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.lastKey(), null);
+        assertNull(map.lastKey());
     }
 
     @Test
@@ -1552,7 +1553,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.containsKey(1), false);
+        assertFalse(map.containsKey(1));
     }
 
     @Test
@@ -1564,7 +1565,7 @@ public class SplayMapTest {
         map.put(1, 1);
 
         // CHECK
-        assertEquals(map.containsKey(1), true);
+        assertTrue(map.containsKey(1));
     }
 
     @Test
@@ -1579,7 +1580,7 @@ public class SplayMapTest {
         map.put(2, 2);
 
         // CHECK
-        assertEquals(map.containsKey(4), false);
+        assertFalse(map.containsKey(4));
     }
 
     @Test
@@ -1594,7 +1595,7 @@ public class SplayMapTest {
         map.put(2, 2);
 
         // CHECK
-        assertEquals(map.containsKey(3), true);
+        assertTrue(map.containsKey(3));
     }
 
     @Test
@@ -1605,7 +1606,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.containsValue(1), false);
+        assertFalse(map.containsValue(1));
     }
 
     @Test
@@ -1617,7 +1618,7 @@ public class SplayMapTest {
         map.put(1, 1);
 
         // CHECK
-        assertEquals(map.containsValue(1), true);
+        assertTrue(map.containsValue(1));
     }
 
     @Test
@@ -1632,7 +1633,7 @@ public class SplayMapTest {
         map.put(2, 2);
 
         // CHECK
-        assertEquals(map.containsValue(4), false);
+        assertFalse(map.containsValue(4));
     }
 
     @Test
@@ -1647,7 +1648,7 @@ public class SplayMapTest {
         map.put(2, 2);
 
         // CHECK
-        assertEquals(map.containsValue(3), true);
+        assertTrue(map.containsValue(3));
     }
 
     @Test
@@ -1662,7 +1663,7 @@ public class SplayMapTest {
         map.put(2, 1);
 
         // CHECK
-        assertEquals(map.containsValue(1), true);
+        assertTrue(map.containsValue(1));
     }
 
     @Test
@@ -1671,7 +1672,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.ceilingEntry(3), null);
+        assertNull(map.ceilingEntry(3));
     }
 
     @Test
@@ -1686,7 +1687,7 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.ceilingEntry(5), null);
+        assertNull(map.ceilingEntry(5));
     }
 
     @Test
@@ -1738,7 +1739,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.ceilingKey(3), null);
+        assertNull(map.ceilingKey(3));
     }
 
     @Test
@@ -1753,7 +1754,7 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.ceilingKey(5), null);
+        assertNull(map.ceilingKey(5));
     }
 
 
@@ -1793,7 +1794,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.higherEntry(3), null);
+        assertNull(map.higherEntry(3));
     }
 
     @Test
@@ -1808,8 +1809,8 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.higherEntry(4), null);
-        assertEquals(map.higherEntry(5), null);
+        assertNull(map.higherEntry(4));
+        assertNull(map.higherEntry(5));
     }
 
     @Test
@@ -1862,7 +1863,7 @@ public class SplayMapTest {
         NavigableMap<Integer, Integer> map = new SplayMap<Integer, Integer>();
 
         // CHECK
-        assertEquals(map.higherKey(3), null);
+        assertNull(map.higherKey(3));
     }
 
     @Test
@@ -1877,8 +1878,8 @@ public class SplayMapTest {
         map.put(4, 4);
 
         // CHECK
-        assertEquals(map.higherKey(4), null);
-        assertEquals(map.higherKey(5), null);
+        assertNull(map.higherKey(4));
+        assertNull(map.higherKey(5));
     }
 
 
@@ -1920,7 +1921,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.pollFirstEntry(), null);
+        assertNull(map.pollFirstEntry());
     }
 
     @Test
@@ -1934,7 +1935,7 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.pollFirstEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
         assertEquals(map.size(), 0);
-        assertEquals(map.pollFirstEntry(), null);
+        assertNull(map.pollFirstEntry());
     }
 
     @Test
@@ -1968,7 +1969,7 @@ public class SplayMapTest {
         // EXEC
 
         // CHECK
-        assertEquals(map.pollLastEntry(), null);
+        assertNull(map.pollLastEntry());
     }
 
     @Test
@@ -1982,7 +1983,7 @@ public class SplayMapTest {
         // CHECK
         assertEquals(map.pollLastEntry(), new SplayMap.Entry<Integer, Integer>(1, 1, null));
         assertEquals(map.size(), 0);
-        assertEquals(map.pollLastEntry(), null);
+        assertNull(map.pollLastEntry());
     }
 
     @Test
@@ -2041,8 +2042,8 @@ public class SplayMapTest {
 
         // CHECK
         assertEquals(values.size(), 0);
-        assertEquals(values.isEmpty(), true);
-        assertEquals(iterator.hasNext(), false);
+        assertTrue(values.isEmpty());
+        assertFalse(iterator.hasNext());
         try {
             iterator.next();
             Assert.fail();
@@ -2063,8 +2064,8 @@ public class SplayMapTest {
         Iterator<Integer> iterator = values.iterator();
 
         assertEquals(values.size(), 1);
-        assertEquals(values.isEmpty(), false);
-        assertEquals(iterator.hasNext(), true);
+        assertFalse(values.isEmpty());
+        assertTrue(iterator.hasNext());
         assertEquals(iterator.next(), Integer.valueOf(7));
 
         try {
@@ -2072,7 +2073,7 @@ public class SplayMapTest {
             Assert.fail();
         } catch (NoSuchElementException ignore) {
         }
-        assertEquals(iterator.hasNext(), false);
+        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -2092,12 +2093,12 @@ public class SplayMapTest {
         Collection<Integer> values = map.values();
         assertEquals(values.size(), 6);
 
-        Integer counter = 0;
+        int counter = 0;
         for (Integer value : map.values()) {
             counter++;
             assertEquals(value, Integer.valueOf(7 - counter));
         }
-        assertEquals(counter, Integer.valueOf(6));
+        assertEquals(counter, 6);
     }
 
     @Test
@@ -2139,7 +2140,7 @@ public class SplayMapTest {
         map.put(1, 6);
 
         // CHECK
-        Integer counter_outer = 0;
+        int counter_outer = 0;
         for (Integer outer : map.values()) {
             counter_outer++;
             assertEquals(outer, Integer.valueOf(7 - counter_outer));
@@ -2151,7 +2152,7 @@ public class SplayMapTest {
             }
             assertEquals(counter_inner, Integer.valueOf(6));
         }
-        assertEquals(counter_outer, Integer.valueOf(6));
+        assertEquals(counter_outer, 6);
     }
 
     @Test
@@ -2195,12 +2196,12 @@ public class SplayMapTest {
             }
         }
 
-        Integer counter = 0;
+        int counter = 0;
         for (Integer value : map.values()) {
             counter++;
             assertEquals(value, (Integer) (counter * 2));
         }
-        assertEquals(counter, Integer.valueOf(3));
+        assertEquals(counter, 3);
     }
 
     @Test
@@ -2216,7 +2217,9 @@ public class SplayMapTest {
         map.put(1, 1);
 
         // CHECK
+        assertTrue(map.containsValue(2));
         assertTrue(map.values().contains(2));
+        assertFalse(map.containsValue(3));
         assertFalse(map.values().contains(3));
     }
 
@@ -2245,6 +2248,7 @@ public class SplayMapTest {
 
         assertFalse(map.values().contains(2));
         assertEquals(map.values().size(), 0);
+        assertTrue(map.values().isEmpty());
     }
 
     @Test
@@ -2256,7 +2260,7 @@ public class SplayMapTest {
         Comparator<? super Integer> comparator = map.comparator();
 
         // CHECK
-        assertEquals(comparator, null);
+        assertNull(comparator);
     }
 
     @Test
